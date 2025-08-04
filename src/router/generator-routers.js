@@ -109,7 +109,12 @@ const constantRouterComponents = {
   // 任务查询
   taskQuery: () => import('@/views/task/TaskQuery'),
   agvTaskQuery: () => import('@/views/task/agvTaskQuery'),
-  CTUTaskQuery: () => import('@/views/task/CTUTaskQuery')
+  CTUTaskQuery: () => import('@/views/task/CTUTaskQuery'),
+
+  // 空页面示例
+  bigStoreFlat: () => import('@/views/warehouse/BigStoreFlat'),
+  boxGroupForklift: () => import('@/views/warehouse/BoxGroupForklift'),
+  boxGroupFlat: () => import('@/views/warehouse/BoxGroupFlat')
 }
 
 // 前端未找到页面路由（固定不用改）
@@ -144,6 +149,38 @@ export const generatorDynamicRouter = data => {
     listToTree(data, childrenNav, 0)
     // rootRouter.children = childrenNav
     const routers = generator(childrenNav)
+    // 自定义新增菜单
+    if (routers.length > 0) {
+      const extraRoute = {
+        path: '/warehouse-demo',
+        name: 'warehouseDemo',
+        component: RouteView,
+        meta: { title: '新菜单', icon: 'appstore' },
+        redirect: '/warehouse-demo/big-store-flat',
+        children: [
+          {
+            path: '/warehouse-demo/big-store-flat',
+            name: 'bigStoreFlat',
+            component: constantRouterComponents.bigStoreFlat,
+            meta: { title: '大件库---平库' }
+          },
+          {
+            path: '/warehouse-demo/box-group-forklift',
+            name: 'boxGroupForklift',
+            component: constantRouterComponents.boxGroupForklift,
+            meta: { title: '箱组库---叉车' }
+          },
+          {
+            path: '/warehouse-demo/box-group-flat',
+            name: 'boxGroupFlat',
+            component: constantRouterComponents.boxGroupFlat,
+            meta: { title: '箱组库---平库' }
+          }
+        ]
+      }
+      routers[0].children = routers[0].children || []
+      routers[0].children.push(extraRoute)
+    }
     // console.log(routers)
     // routers.push(notFoundRouter)
     resolve(routers)
